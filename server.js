@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 let users = [];
+let history = [];
 
 app.use(express.static('public'));
 
@@ -20,14 +21,17 @@ io.on('connection', (socket) => {
 
     // on connection
     io.emit('chat message', "user connected"); 
+    socket.emit('load-messages', history);
     loadUsers();
 
     socket.on('chat message', (msg) => {
         console.log('message: ' + msg);
         if(socket.nickname){
+            history.push(socket.nickname + ': ' + msg);
             io.emit('chat message', socket.nickname + ': ' + msg);
         }
         else {
+            history.push('anon: ' + msg);
             io.emit('chat message', 'anon: ' + msg);
         }
         

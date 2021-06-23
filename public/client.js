@@ -41,3 +41,13 @@ socket.on('users', (data) => {
         users.appendChild(item);
     }
 });
+
+socket.on('load-messages', (msgs) => {
+    console.log("test");
+    console.log(msgs);
+    for(let i = 0; i < msgs.length; i++){
+        let item = document.createElement('li');
+        item.textContent = msgs[i];
+        messages.appendChild(item);
+    }
+});
