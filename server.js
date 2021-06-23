@@ -5,6 +5,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+let users = [];
+
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
@@ -12,15 +14,36 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    io.emit('chat message', "user connected");
+    loadUsers = () => {
+        io.sockets.emit('users', users);
+    }
+
+    // on connection
+    io.emit('chat message', "user connected"); 
+    loadUsers();
 
     socket.on('chat message', (msg) => {
         console.log('message: ' + msg);
-        io.emit('chat message', msg);
+        if(socket.nickname){
+            io.emit('chat message', socket.nickname + ': ' + msg);
+        }
+        else {
+            io.emit('chat message', 'anon: ' + msg);
+        }
+        
     });
 
+    socket.on('user-nickname', (uNickname) => {
+        socket.nickname = uNickname;
+        users.push(socket.nickname);
+        loadUsers();
+    })
+
     socket.on('disconnect', () => {
-        io.emit('chat message', "user disconnected");
+        console.log(users.indexOf(socket.nickname));
+        users.splice(users.indexOf(socket.nickname), 1);
+        loadUsers();
+        io.emit('chat message', socket.nickname + ' disconnected');
     });
 });
 
