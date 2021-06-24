@@ -11,3 +11,4 @@
 Additional:
 
 1. Added user history ✔️
+2. Add chat rooms
