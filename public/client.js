@@ -1,5 +1,3 @@
-console.log("test");
-
 var socket = io();
 
 var messages = document.getElementById('messages');
@@ -8,6 +6,7 @@ var input = document.getElementById('input');
 var form2 = document.getElementById('form2');
 var input2 = document.getElementById('input2');
 var users = document.getElementById('users');
+var typing = document.getElementById('typing');
 
 form.addEventListener('submit', function(e) {
     e.preventDefault();
@@ -25,8 +24,15 @@ form2.addEventListener('submit', (e) => {
     }
 })
 
+form.addEventListener('keypress', () => {
+    if (input.value.length > 0) {
+        socket.emit('typing', input.value);
+    }
+});
+
 
 socket.on('chat message', function(msg) {
+    typing.innerHTML = "";
     let item = document.createElement('li');
     item.textContent = msg;
     messages.appendChild(item);
@@ -43,11 +49,13 @@ socket.on('users', (data) => {
 });
 
 socket.on('load-messages', (msgs) => {
-    console.log("test");
-    console.log(msgs);
     for(let i = 0; i < msgs.length; i++){
         let item = document.createElement('li');
         item.textContent = msgs[i];
         messages.appendChild(item);
     }
+});
+
+socket.on('typing', (data) => {
+    typing.innerHTML = data + ' is typing';
 });

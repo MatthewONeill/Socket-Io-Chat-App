@@ -43,6 +43,10 @@ io.on('connection', (socket) => {
         loadUsers();
     })
 
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', (socket.nickname) ? socket.nickname : 'anon');
+    });
+
     socket.on('disconnect', () => {
         console.log(users.indexOf(socket.nickname));
         users.splice(users.indexOf(socket.nickname), 1);
