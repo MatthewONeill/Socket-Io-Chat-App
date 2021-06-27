@@ -25,7 +25,6 @@ io.on('connection', (socket) => {
     loadUsers();
 
     socket.on('chat message', (msg) => {
-        console.log('message: ' + msg);
         if(socket.nickname){
             history.push(socket.nickname + ': ' + msg);
             io.emit('chat message', socket.nickname + ': ' + msg);
@@ -48,7 +47,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        console.log(users.indexOf(socket.nickname));
         users.splice(users.indexOf(socket.nickname), 1);
         loadUsers();
         io.emit('chat message', socket.nickname + ' disconnected');
